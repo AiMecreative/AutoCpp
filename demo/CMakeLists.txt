@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.22)
+project(demo)
+set(CMAKE_CXX_STANDARD 17)
+add_executable(demo)
+add_library(project_lib E:/liteapps/AutoCpp/demo/func.cpp E:/liteapps/AutoCpp/demo/func.hpp )
+target_link_libraries(demo PUBLIC project_lib)
+target_sources(demo PUBLIC E:/liteapps/AutoCpp/demo/main.cpp)

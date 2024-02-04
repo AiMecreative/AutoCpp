@@ -1,0 +1,8 @@
+Compiler:
+  cmake_path: "d:/cmake/cmake-3.27.6-windows-x86_64/bin/cmake.exe"
+  build_type: "Release"
+  c_path: "e:/xrClang/clangd/LLVM/bin/clang.exe"
+  cxx_path: "e:/xrClang/clangd/LLVM/bin/clang++.exe"
+  project_name: "demo"
+  cmake_min: 3.22
+  cxx_standard: 17
