@@ -1,8 +1,7 @@
 import yaml
 import argparse
 
-from autocpp.cxxproject import CxxProject
-from autocpp.compiler import Compiler
+from autocpp import CxxProject, Compiler
 
 
 config_path = "./config.yml"
@@ -27,5 +26,5 @@ if __name__ == "__main__":
 
     compiler = Compiler(configs=configs[Compiler.COMPILER_KEY])
     compiler.config_cmake(cxx_project.project_path, cxx_project.multifile)
-    compiler.compile_project(cxx_project)
-    compiler.run_project(cxx_project)
+    compiler.cmake_build(cxx_project)
+    compiler.cmake_run(cxx_project)
