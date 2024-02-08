@@ -1,8 +1,14 @@
-Compiler:
-  cmake_path: "d:/cmake/cmake-3.27.6-windows-x86_64/bin/cmake.exe"
-  build_type: "Release"
+CompilerKey:
   c_path: "e:/xrClang/clangd/LLVM/bin/clang.exe"
   cxx_path: "e:/xrClang/clangd/LLVM/bin/clang++.exe"
-  project_name: "demo"
-  cmake_min: 3.22
+  build_type: "Release"
+  build_path: "build"
+  generator: "Ninja"
+
+CMakeKey:
+  cmake_path: "d:/cmake/cmake-3.27.6-windows-x86_64/bin/cmake.exe"
+  min_version: 3.22
   cxx_standard: 17
+  project_name: "demo"
+  lib_name: "demolib"
+  

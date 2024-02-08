@@ -26,11 +26,11 @@ class CompilerKey:
 @dataclass
 class CompilerConfig:
 
-    CCompilerPath: str
-    CXXCompilerPath: str
-    BuildType: str
-    BuildPath: str
-    Genrator: str
+    CCompilerPath: str = ""
+    CXXCompilerPath: str = ""
+    BuildType: str = ""
+    BuildPath: str = ""
+    Genrator: str = ""
 
 
 @dataclass
@@ -47,11 +47,11 @@ class CMakeKey:
 @dataclass
 class CMakeConfig:
 
-    CMakePath: str
-    CMakeMinVersion: float
-    CXXStandard: int
-    ProjectName: str
-    LibName: str
+    CMakePath: str = ""
+    CMakeMinVersion: float = 0.
+    CXXStandard: int = 0
+    ProjectName: str = ""
+    LibName: str = ""
 
 
 def config_parse(config: dict) -> Dict:

@@ -12,7 +12,7 @@ class CxxProject(object):
         if not path.exists(project_path):
             raise Exception("project_path is not exists")
         if not multifile:
-            if path.splitext[1] not in self.CXX_EXT:
+            if path.splitext(project_path)[1] not in self.CXX_EXT:
                 raise Exception("project_path not points to a cxx project")
         if multifile:
             if not path.isdir(project_path):

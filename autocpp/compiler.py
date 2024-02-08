@@ -1,13 +1,9 @@
 import os
-import sys
 import subprocess
-import logging
-from os import path
-from typing import Dict
-from logging import handlers
+from typing import Dict, List
 from .cxxproject import CxxProject
 from .cmake_tools import CMakeTools
-from datamap import *
+from .datamap import *
 
 
 class Compiler(object):
@@ -34,9 +30,9 @@ class Compiler(object):
                 if not file.split(".")[1] in CxxProject.CXX_EXT:
                     continue
                 if file.split(".")[0] == "main":
-                    self.main_file = self.PATH_SYMBOL.join((project.project_path, file))
+                    self.main_file = "/".join((project.project_path, file))
                 else:
-                    file = self.PATH_SYMBOL.join((project.project_path, file))
+                    file = "/".join((project.project_path, file))
                     lib_files += file
                     lib_files += " "
             self.cmake_tool.cmake_contents = self.cmake_tool.cmake_init_mul(main_file, lib_files, self.cmake_configs)
@@ -47,43 +43,31 @@ class Compiler(object):
             "-D CMAKE_C_COMPILER:FILEPATH={}".format(self.compiler_configs.CCompilerPath) + " " + \
             "-D CMAKE_CXX_COMPILER:FILEPATH={}".format(self.compiler_configs.CXXCompilerPath) + " " + \
             "-S {}".format(project.project_path if project.multifile else project.project_path.split("/")[0:-1]) + " " + \
-            "-B {}".format(self.compiler_configs.BuildPath) + " " + \
+            "-B {}".format(project.project_path + "/" + self.compiler_configs.BuildPath) + " " + \
             "-G {}".format(self.compiler_configs.Genrator)
         build_cmd = "{}".format(self.compiler_configs.Genrator)
-        run_cmd = ".{}/{}.exe".format(self.compiler_configs.BuildPath, self.cmake_configs.ProjectName)
+        run_cmd = ".{}/{}.exe".format(project.project_path + "/" + self.compiler_configs.BuildPath, self.cmake_configs.ProjectName)
         self.cmake_tool.set_cli("config", config_cmd)
         self.cmake_tool.set_cli("build", build_cmd)
         self.cmake_tool.set_cli("run", run_cmd)
 
-        self.cmake_tool.cmake_lists(self.cmake_configs.CMakePath)
+        self.cmake_tool.cmake_lists(project.project_path + "/" + "CMakeLists.txt")
 
-        print("CMakeList.txt has been written into {}".format(self.cmake_configs.CMakePath))
+        print("CMakeList.txt has been written into {}".format(project.project_path + "/CMakeLists.txt"))
         print("CMake commands has been config:")
         print(self.cmake_tool.cmake_cli)
 
-    def cmake_config(self):
+    def run(self, cmd: str, test_samples: str = ""):
         try:
-            subprocess.call([
-                self.cmake_configs.CMakePath,
-                " " + self.cmake_tool.cmake_cli["config"]
-            ])
-        except OSError:
-            print("cmake config error")
-
-    def cmake_build(self):
-        try:
-            subprocess.call([
-                self.cmake_configs.CMakePath,
-                " " + self.cmake_tool.cmake_cli["build"]
-            ])
-        except OSError:
-            print("cmake build error")
-
-    def cmake_run(self):
-        try:
-            subprocess.call([
-                self.cmake_configs.CMakePath,
-                " " + self.cmake_tool.cmake_cli["run"]
-            ])
-        except OSError:
-            print("cmake run error")
+            out_bytes = subprocess.run(
+                [self.cmake_configs.CMakePath,
+                 self.cmake_tool.cmake_cli[cmd],
+                 test_samples if cmd == "run" else ""],
+                stdout=subprocess.PIPE)
+            out_text = out_bytes.stdout.decode("utf-8")
+            print("running cmd {} results: {}".format(cmd, out_text))
+        except subprocess.CalledProcessError as e:
+            err_bytes = e.output
+            err_text = err_bytes.decode("utf-8")
+            code = e.returncode
+            print("error when running cmd `{}`: {} with error code: {}".format(cmd, err_text, code))

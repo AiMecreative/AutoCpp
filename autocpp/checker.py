@@ -12,6 +12,8 @@ class AutoChecker(object):
         # problem No.: pair(test_samples, test_results)
         self.references: Dict = {}
 
+    def give_score(self): pass
+
     def add_ref(self, ref_project: CxxProject, test_samples: List):
         pass
 

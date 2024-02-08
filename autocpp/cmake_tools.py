@@ -1,6 +1,6 @@
 import os
 from typing import List, Dict
-from datamap import *
+from .datamap import *
 
 
 class CMakeTools(object):
