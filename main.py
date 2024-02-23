@@ -1,28 +1,13 @@
-import yaml
-import argparse
-
-from autocpp import CxxProject, Compiler, config_parse
+from autocpp import CLearner, Compiler, CProject
+from pathlib import Path
 
 
-config_path = "./config.yml"
-
+tasks_root = Path("data")
+ref_root = Path("ref")
+spliter = '\\'
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("project", type=str, help="the folder or file of cxx project")
-    parser.add_argument("--config", type=str, default=config_path, help="the config file path")
-    parser.add_argument("--multifile", action="store_true", default=False, help="if project is multifile")
-    parser.add_argument("--ref", action="store_true", default=False, help="if the project is reference")
+    tasks_list = tasks_root.iterdir()
+    for tasks in tasks_list:
 
-    args = parser.parse_args()
-    with open(args.config, "r") as y:
-        configs = yaml.safe_load(y)
-        configs = config_parse(configs)
-
-    cxx_project = CxxProject(
-        project_path=args.project,
-        multifile=args.multifile, ref=args.ref)
-
-    compiler = Compiler(configs=configs)
-    compiler.cmake_init(cxx_project)
-    compiler.run("config")
+        learner = CLearner(tasks.name.split(spliter)[-1], tasks)

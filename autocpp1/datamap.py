@@ -30,7 +30,7 @@ class CompilerConfig:
     CXXCompilerPath: str = ""
     BuildType: str = ""
     BuildPath: str = ""
-    Genrator: str = ""
+    Generator: str = ""
 
 
 @dataclass
