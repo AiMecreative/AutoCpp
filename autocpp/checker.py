@@ -44,18 +44,15 @@ class Checker(object):
 			learner = CLearner(learner_folder)
 			projects = learner_folder.iterdir()
 			for project in projects:
+				if project.name == "readme.md": continue
 				print(">>> config project: {} <<<".format(project.name))
 				# config main file, use fool traversing 
-				cproject = None
 				project = learner_folder / project
 				if project.is_file():
-					cproject = CProject(project, multifile=False)
+					multifile = False
 				if project.is_dir():
-					# open every cpp file in order and match the `main` function
-					# self.find_mainfile(project)
-					cproject = CProject(project, multifile=True)
-				# cproject.config_mainfile()
-				# cproject.config_libfiles()
+					multifile = True
+				cproject = CProject(project, multifile)
 				learner.append_task(cproject)
 			learner_list.append(learner)
 		return learner_list
@@ -63,18 +60,18 @@ class Checker(object):
 	def config_workplace(self, options: Dict):
 		Path.mkdir(self.build_folder, mode=711, parents=True, exist_ok=True)
 		with Path.open(self.cmake_path, mode="w", encoding="utf-8") as cmake:
-			cmake.write("cmake_minimum_required(VERSION {})".format(options["version"]))
-			cmake.write("set(CMAKE_CXX_STANDARD {})".format(options["cxx_std"]))
+			cmake.write("cmake_minimum_required(VERSION {})\n".format(options["version"]))
+			cmake.write("set(CMAKE_CXX_STANDARD {})\n".format(options["cxx_std"]))
 
 	def check(self, learner: CLearner, ref: Path) -> None:
 		for project in learner.task_list:
 			with Path.open(self.cmake_path, mode="r", encoding="utf-8") as cmake:
-				contents = cmake.readlines()
-			contents.append("project({})".format(project.project_name))
+				contents = cmake.readlines()[:2]
+			contents.append("project({})\n".format(project.project_name))
+			contents.append("add_executable({})\n".format(project.project_name))
+			contents.append("target_sources({} PUBLIC {})\n".format(project.project_name, project.get_mainfile()))
 			if project.is_multifile:
-				contents.append("add_library({} {})".format(project.lib_name, " ".join(project.get_libfiles())))
-			contents.append("add_execuable({})".format(project.project_name))
-			contents.append("target_sources({} PUBLIC {})".format(project.project_name, project.get_mainfile()))
-			contents.append("target_link_libraries({} PUBLIC {})".format(project.project_name, " ".join(project.get_libfiles())))
+				contents.append("add_library({} {})\n".format(project.lib_name, " ".join(project.get_libfiles())))
+				contents.append("target_link_libraries({} PUBLIC {})\n".format(project.project_name, " ".join(project.get_libfiles())))
 			with Path.open(self.cmake_path, mode="w", encoding="utf-8") as cmake:
 				cmake.writelines(contents)

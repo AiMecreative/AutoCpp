@@ -19,10 +19,9 @@ if __name__ == "__main__":
     checker_path = working_root
     checker = Checker(checker_path)
     checker.create_workfolder(tasks_root)
-    checker.config_workplace(cmake_opt)
     learners = checker.config_learner()
     for learner in learners:
+        checker.config_workplace(cmake_opt)
         checker.check(learner, ref=Path(""))
-        break
     
         

@@ -19,7 +19,7 @@ class CProject(object):
 
         self.config_mainfile()
         self.config_libfiles()
-    
+
     @property
     def is_multifile(self):
         return self.multifile
@@ -50,17 +50,20 @@ class CProject(object):
         hpps = [project / hpp for hpp in hpps]
         for cpp in cpps:
             if project / cpp != self.mainfile:
-                self.libfiles.append(cpp)
+                self.libfiles.append(project / cpp)
         self.libfiles.extend(hs)
         self.libfiles.extend(hpps)
     
-    def get_mainfile(self):
+    def get_mainfile(self) -> str:
         assert self.mainfile is not None
-        return self.mainfile
+        return self.mainfile.name.replace('\\', '/')
     
-    def get_libfiles(self):
+    def get_libfiles(self) -> List[str]:
         assert self.libfiles is not []
-        return self.libfiles
+        libs = []
+        for lib in self.libfiles:
+            libs.append(lib.name.replace('\\', '/'))
+        return libs
 
     def compile_project(self, compiler: Compiler):
         pass
