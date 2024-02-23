@@ -1,13 +1,28 @@
-from autocpp import CLearner, Compiler, CProject
+import re
+
+from autocpp import CLearner, Compiler, CProject, Checker
 from pathlib import Path
 
 
-tasks_root = Path("data")
-ref_root = Path("ref")
-spliter = '\\'
+current_path = Path.cwd()
+tasks_root = current_path / Path("data")
+working_root = current_path / Path("working")
+ref_root = current_path / Path("ref")
+
+cmake_opt = {
+    "version": 3.22,
+    "cxx_std": 17
+}
+
 
 if __name__ == "__main__":
-    tasks_list = tasks_root.iterdir()
-    for tasks in tasks_list:
-
-        learner = CLearner(tasks.name.split(spliter)[-1], tasks)
+    checker_path = working_root
+    checker = Checker(checker_path)
+    checker.create_workfolder(tasks_root)
+    checker.config_workplace(cmake_opt)
+    learners = checker.config_learner()
+    for learner in learners:
+        checker.check(learner, ref=Path(""))
+        break
+    
+        
